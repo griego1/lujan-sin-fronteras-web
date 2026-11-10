@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Luján sin fronteras — La Virgen de Luján</title>
+<meta name="description" content="Explorá la historia de la Virgen de Luján, su manto y su figura, y recorré un atlas de su devoción en el mundo.">
+<link rel="stylesheet" href="leaflet/leaflet.css">
+<link rel="stylesheet" href="sitio.css">
+</head>
+<body>
+<header id="inicio"><a href="index.html#explorar">Volver a explorar</a> <a class="language-switch" href="atlas-en.html" hreflang="en" lang="en">English</a></header>
+<main>
+<div class="intro">
+<p class="eyebrow page-subtitle">La devoción en el mundo</p>
+<h1 class="page-title">Luján sin fronteras</h1>
+<p>La devoción a la Virgen de Luján nació en Argentina y llegó a comunidades de otros países. Este atlas reúne historias de imágenes que viajaron y de personas que hicieron suya la devoción a través de cantos, procesiones y celebraciones. Elegí un punto del mapa o un lugar de la lista para leer su historia.</p>
+</div>
+<section id="atlas" aria-label="Explorar las historias" class="atlas">
+<div class="map"><span class="eyebrow">Explora los lugares</span>
+<div id="map" aria-label="Mapa de Luján y doce casos fuera de Argentina"></div><p id="map-status" class="note" role="status">Cargando el mapa…</p>
+<p class="note">Las ubicaciones son aproximadas y señalan lugares vinculados con cada historia, no necesariamente la posición exacta de las imágenes.</p><p class="note">El punto violeta señala Luján, origen de la devoción; los puntos azules, las historias fuera de Argentina. El dorado destaca la selección. Pulsa un punto o elige un lugar de la lista para abrir su historia. Usa + y − para acercar o alejar el mapa.</p></div>
+<div class="places"><h2>Lugares e historias</h2><p class="note">Elige un lugar para leer su historia y consultar las fuentes.</p><div class="filters" role="group" aria-label="Elegir lugar"><button data-case="lujan" aria-pressed="false">Luján · Argentina</button><button data-case="pedralba" aria-pressed="false">Pedralba</button><button data-case="tanzania" aria-pressed="false">Tanzania</button><button data-case="washington" aria-pressed="false">Washington</button><button data-case="valencia" aria-pressed="false">Valencia · Santa Catalina</button><button data-case="vaticano" aria-pressed="false">Vaticano</button><button data-case="puntaeste" aria-pressed="false">Punta del Este · Uruguay</button><button data-case="nacunday" aria-pressed="false">Ñacunday · Paraguay</button><button data-case="nunoa" aria-pressed="false">Ñuñoa · Chile</button><button data-case="concepcion" aria-pressed="false">Concepción · Chile</button><button data-case="curitiba" aria-pressed="false">Curitiba · Brasil</button><button data-case="ipanema" aria-pressed="false">Ipanema · Brasil</button><button data-case="aldershot" aria-pressed="false">Aldershot · Reino Unido</button></div></div>
+</section>
+</main>
+<dialog id="story-dialog" class="story-dialog" aria-labelledby="story-title"><div class="dialog-toolbar"><button id="close-story" type="button" autofocus>Cerrar ficha</button></div><article id="story" class="card"></article></dialog>
+<footer>Proyecto académico en desarrollo · Historias de fe, migración y pertenencia.</footer>
+<script src="leaflet/leaflet.js"></script>
+<script src="datos.js"></script>
+<script>
+const storyDialog = document.getElementById('story-dialog');
+let storyTrigger = null;
+function showCase(key, trigger){
+  const c=cases[key];
+  if(!c)return;
+  if(!storyDialog.open)storyTrigger=trigger || document.activeElement;
+  if(window.selectMapCase)window.selectMapCase(key);
+  document.querySelectorAll('[data-case]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===key)));
+  document.getElementById('story').innerHTML=`<span class="eyebrow">${c.country}</span><h2 id="story-title">${c.title}</h2>${c.image ? `<figure class="story-photo"><img src="${c.image.src}" alt="${c.image.alt}" width="${c.image.width}" height="${c.image.height}"><figcaption>${c.image.caption} Foto: <a href="${c.image.source}" target="_blank" rel="noopener noreferrer">${c.image.author} / Wikimedia Commons</a> · <a href="${c.image.licenseUrl}" target="_blank" rel="noopener noreferrer">${c.image.license}</a>. Sin modificaciones.</figcaption></figure>` : ''}<p>${c.text}</p><p class="status">${c.status}</p><h3>Fuentes</h3><ul>${c.sources.map(s=>`<li><a href="${s[1]}" target="_blank" rel="noopener noreferrer">${s[0]}</a></li>`).join('')}</ul>`;
+  if(!storyDialog.open)storyDialog.showModal();
+  storyDialog.scrollTop=0;
+}
+document.querySelectorAll('[data-case]').forEach(b=>{
+  b.setAttribute('aria-haspopup','dialog');
+  b.setAttribute('aria-controls','story-dialog');
+  b.addEventListener('click',()=>showCase(b.dataset.case,b));
+});
+document.getElementById('close-story').addEventListener('click',()=>storyDialog.close());
+storyDialog.addEventListener('close',()=>{if(storyTrigger && storyTrigger.isConnected)storyTrigger.focus();});
+</script>
+<script src="fondo-mundial.js"></script>
+<script src="mapa.js"></script>
+</body></html>
